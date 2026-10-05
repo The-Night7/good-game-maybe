@@ -25,7 +25,7 @@ temps réel) et de **Dofus** (univers 2D isométrique, métiers, ambiance), avec
 | Moteur | Godot 4.3+ (GDScript) | Gratuit, exporte PC + Android + iOS, isométrique natif |
 | Rendu | GL Compatibility | Fonctionne sur le plus de téléphones possible |
 | Vue | 2D isométrique, tuiles 64×32 | Style Dofus |
-| Réseau (prévu) | Serveur Godot sans affichage, autoritaire | Même code client/serveur, anti-triche |
+| Réseau | Serveur autoritaire (vie, combat, butin, sac) ; position envoyée par le joueur pour rester fluide | Anti-triche raisonnable, confortable sur mobile |
 | Contrôles | Clavier, clic/toucher pour se déplacer, D-pad virtuel optionnel | PC et mobile |
 
 ## Plateformes
@@ -42,11 +42,25 @@ D-pad, toucher pour se déplacer, boutons à l'écran.
 
 ## Feuille de route
 
-- [x] **Étape 1a** : carte isométrique, déplacement clavier / clic / toucher, D-pad mobile, options
-- [ ] **Étape 1b** : un monstre, une arme avec des compétences, des points de vie
-- [ ] **Étape 2** : multijoueur (serveur autoritaire, plusieurs joueurs sur la même carte)
-- [ ] **Étape 3** : récolte, fabrication, inventaire sauvegardé, l'équipement donne les compétences
-- [ ] **Étape 4** : plusieurs zones, la timeline, les guildes, un marché
+- [x] **Étape 1** : carte isométrique, déplacement (D-pad, toucher), options
+- [x] **Étape 2** : combat temps réel, monstres avec IA, compétences liées à l'arme, mort et réapparition
+- [x] **Étape 3** : récolte, artisanat, sac, équipement, potions
+- [x] **Étape 4** : multijoueur entre amis (hôte sur téléphone ou serveur dédié), sauvegarde chez l'hôte
+- [ ] **Étape 5** : vrais graphismes (sprites, animations), sons et musique
+- [ ] **Étape 6** : plusieurs zones et donjons, boss, paliers d'équipement (T1 → T4 comme Albion)
+- [ ] **Étape 7** : la timeline (histoire, quêtes, événements du monde), guildes, marché entre joueurs
+- [ ] **Étape 8** : serveur en ligne permanent, comptes, version PC
+
+## Contenu actuel
+
+| | |
+|---|---|
+| Armes | Épée (Taillade, Tourbillon, Fracas), Arc (Tir, Pluie de flèches, Tir perçant), Bâton (Boule de feu, Explosion, Soin de groupe) |
+| Monstres | Slime (prairies), Slime de roche (zones de pierre) |
+| Ressources | Bois (arbres), Minerai (rochers), Fibre (buissons), Gelée (monstres) |
+| Artisanat | Potion de soin, Épée de fer, Arc de chasseur, Bâton de braise, Veste de cuir |
+
+Tout l'équilibrage est dans `scripts/game_data.gd`.
 
 ## Timeline (à choisir)
 

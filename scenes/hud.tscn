@@ -1,10 +1,107 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
 [ext_resource type="Script" path="res://scripts/ui/dpad.gd" id="2_dpad"]
+[ext_resource type="Script" path="res://scripts/ui/skill_button.gd" id="3_skill"]
+[ext_resource type="Script" path="res://scripts/ui/inventory_panel.gd" id="4_inventory"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_bg"]
+bg_color = Color(0, 0, 0, 0.55)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
+bg_color = Color(0.84, 0.27, 0.29, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_status"]
+bg_color = Color(0.08, 0.1, 0.14, 0.6)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_hud")
+
+[node name="Status" type="PanelContainer" parent="."]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 356.0
+offset_bottom = 120.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_status")
+
+[node name="VBox" type="VBoxContainer" parent="Status"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="NameLabel" type="Label" parent="Status/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+
+[node name="HpBar" type="ProgressBar" parent="Status/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 24)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_hp_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hp_fill")
+value = 100.0
+show_percentage = false
+
+[node name="HpLabel" type="Label" parent="Status/VBox/HpBar"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 15
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InfoLabel" type="Label" parent="Status/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.7)
+theme_override_font_sizes/font_size = 15
+
+[node name="TopButtons" type="HBoxContainer" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -316.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 72.0
+grow_horizontal = 0
+theme_override_constants/separation = 12
+alignment = 2
+
+[node name="BagButton" type="Button" parent="TopButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 56)
+layout_mode = 2
+text = "Sac"
+
+[node name="OptionsButton" type="Button" parent="TopButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 56)
+layout_mode = 2
+text = "Options"
 
 [node name="DPad" type="Control" parent="."]
 layout_mode = 3
@@ -19,39 +116,105 @@ grow_vertical = 0
 mouse_filter = 2
 script = ExtResource("2_dpad")
 
-[node name="OptionsButton" type="Button" parent="."]
+[node name="Actions" type="Control" parent="."]
 layout_mode = 3
-anchors_preset = 1
+anchors_preset = 3
 anchor_left = 1.0
+anchor_top = 1.0
 anchor_right = 1.0
-offset_left = -136.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = 56.0
+anchor_bottom = 1.0
+offset_left = -360.0
+offset_top = -320.0
+offset_right = -24.0
+offset_bottom = -24.0
 grow_horizontal = 0
-text = "Options"
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="AttackButton" type="Control" parent="Actions"]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 176.0
+offset_top = 136.0
+offset_right = 326.0
+offset_bottom = 286.0
+mouse_filter = 2
+script = ExtResource("3_skill")
+color = Color(0.705, 0.282, 0.235, 1)
+repeat_while_held = true
+
+[node name="SkillButton1" type="Control" parent="Actions"]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 66.0
+offset_top = 161.0
+offset_right = 166.0
+offset_bottom = 261.0
+mouse_filter = 2
+script = ExtResource("3_skill")
+
+[node name="SkillButton2" type="Control" parent="Actions"]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 201.0
+offset_top = 26.0
+offset_right = 301.0
+offset_bottom = 126.0
+mouse_filter = 2
+script = ExtResource("3_skill")
+
+[node name="PotionButton" type="Control" parent="Actions"]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 100.0
+offset_top = 60.0
+offset_right = 180.0
+offset_bottom = 140.0
+mouse_filter = 2
+script = ExtResource("3_skill")
+label = "Potion"
+color = Color(0.878, 0.314, 0.353, 1)
+
+[node name="KnockoutLabel" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -60.0
+offset_right = 300.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 34
+text = "K.O. !
+Retour au camp dans un instant…"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="OptionsPanel" type="PanelContainer" parent="."]
-layout_mode = 3
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -160.0
-offset_top = -90.0
-offset_right = 160.0
-offset_bottom = 90.0
+offset_left = -200.0
+offset_top = -130.0
+offset_right = 200.0
+offset_bottom = 130.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Margin" type="MarginContainer" parent="OptionsPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 18
 
 [node name="VBox" type="VBoxContainer" parent="OptionsPanel/Margin"]
 layout_mode = 2
@@ -59,15 +222,39 @@ theme_override_constants/separation = 14
 
 [node name="Title" type="Label" parent="OptionsPanel/Margin/VBox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 26
 text = "Options"
 horizontal_alignment = 1
 
 [node name="DPadToggle" type="CheckButton" parent="OptionsPanel/Margin/VBox"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 text = "D-pad tactile"
 
+[node name="LeaveButton" type="Button" parent="OptionsPanel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+text = "Quitter la partie"
+
 [node name="CloseButton" type="Button" parent="OptionsPanel/Margin/VBox"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 text = "Fermer"
+
+[node name="InventoryPanel" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -460.0
+offset_top = -300.0
+offset_right = 460.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_inventory")

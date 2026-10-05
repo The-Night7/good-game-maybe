@@ -1,9 +1,23 @@
 # good-game-maybe
 
-MMORPG 2D isométrique pour jouer entre amis, inspiré d'Albion Online et de Dofus.
-Combat en temps réel. **Priorité : la version mobile**, la version PC viendra ensuite. Voir [DESIGN.md](DESIGN.md) pour la vision du jeu.
+MMORPG 2D isométrique **à jouer entre amis**, d'abord sur **mobile**.
+Le combat et l'artisanat s'inspirent d'Albion Online, les commandes de Guardian Tales,
+et l'univers en ligne de Dofus. Voir [DESIGN.md](DESIGN.md) pour la vision du jeu.
 
-![Prototype](docs/screenshot.png)
+![En jeu](docs/screenshot.png)
+
+## Ce qu'on peut faire
+
+- **Combattre** des slimes et des slimes de roche, en temps réel avec visée automatique.
+- **C'est l'arme qui fait la classe** (comme Albion) : épée, arc ou bâton, avec 3 compétences chacun.
+- **Récolter** du bois, du minerai et de la fibre, et récupérer la gelée des monstres.
+- **Fabriquer** des armes, une armure et des potions, puis s'équiper depuis le sac.
+- **Jouer à plusieurs** : un joueur héberge depuis son téléphone et ses amis le rejoignent.
+  La progression est sauvegardée chez l'hôte.
+
+| Menu | Sac & artisanat |
+|---|---|
+| ![Menu](docs/menu.png) | ![Sac](docs/sac.png) |
 
 ## Lancer le jeu
 
@@ -11,30 +25,57 @@ Combat en temps réel. **Priorité : la version mobile**, la version PC viendra 
 2. Ouvrir Godot → **Importer** → choisir `project.godot`.
 3. Appuyer sur **F5**.
 
-## Contrôles
+### Sur Android
 
-| | PC | Mobile |
-|---|---|---|
-| Se déplacer | ZQSD / WASD ou flèches | D-pad à l'écran (8 directions) |
-| Aller à un endroit | Clic gauche (maintenir pour suivre la souris) | Toucher la carte |
-| Options | Bouton **Options** en haut à droite | idem |
+Le preset **Android** est prêt dans `export_presets.cfg`. Dans Godot :
+**Éditeur → Gérer les modèles d'export** (installer les modèles), configurer le SDK Android
+(**Éditeur → Paramètres de l'éditeur → Export → Android**), puis **Projet → Exporter → Android**.
 
-Le **D-pad** est activé par défaut sur les appareils tactiles. On peut l'activer ou le
-désactiver dans **Options → D-pad tactile** (le choix est sauvegardé).
+## Jouer entre amis
+
+1. Tout le monde est sur le **même Wi-Fi**.
+2. Un joueur touche **« Héberger une partie pour mes amis »**. Son IP s'affiche en haut à gauche.
+3. Les autres entrent cette IP et touchent **« Rejoindre »**.
+
+Pour jouer à distance, on peut lancer un **serveur dédié** (sur un PC ou un petit serveur en
+ligne) en ouvrant le port UDP 7777 :
+
+```sh
+godot --headless --path . -- --server --port=7777
+```
+
+## Commandes (mobile)
+
+| | |
+|---|---|
+| D-pad à gauche | Se déplacer (8 directions). Désactivable dans **Options** |
+| Toucher la carte | Aller à cet endroit |
+| Gros bouton rouge | Attaque de base (maintenir pour enchaîner). Devient **Récolter** près d'une ressource |
+| Deux boutons ronds | Compétences de l'arme équipée |
+| Bouton Potion | Boire une potion de soin |
+| **Sac** | Inventaire, équipement et artisanat |
+
+Sur PC, en attendant la version dédiée : flèches pour se déplacer, clic pour aller quelque part.
 
 ## Tests
 
 ```sh
+# Partie solo : combat, récolte, artisanat, équipement, D-pad, multi-touch…
 godot --headless --path . -s res://tests/run_tests.gd
+
+# Réseau : un serveur, puis un ou plusieurs clients
+godot --headless --path . -- --server --port=7791 &
+godot --headless --path . -s res://tests/network_client_test.gd -- --port=7791 --name=Alice
 ```
 
 ## Structure
 
 ```
-scenes/           Scènes Godot (main, joueur, HUD, arbre)
-scripts/autoload  Settings : préférences sauvegardées
-scripts/world     Génération de la carte isométrique, scène principale
-scripts/player    Déplacement du joueur
-scripts/ui        HUD, D-pad virtuel
-tests/            Tests automatisés (sans affichage)
+scenes/             Scènes Godot (menu, monde, joueur, monstre, ressource, HUD)
+scripts/game_data.gd  Tout l'équilibrage : objets, armes, compétences, recettes, monstres
+scripts/autoload    Settings (préférences) et Network (solo / hôte / client / serveur)
+scripts/entities    Joueur, monstres, ressources, résolution du combat
+scripts/world       Carte isométrique, monde (apparitions, butin, sauvegarde), effets
+scripts/ui          HUD, D-pad, boutons de compétence, sac, menu principal
+tests/              Tests automatisés (sans affichage)
 ```

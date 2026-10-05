@@ -1,9 +1,9 @@
 class_name DPad
-extends Control
+extends TouchControl
 ## D-pad virtuel 8 directions pour écrans tactiles.
 ##
 ## Il presse les actions move_* comme le ferait un clavier : le joueur n'a pas
-## besoin de savoir d'où vient l'entrée. Fonctionne aussi à la souris (tests sur PC).
+## besoin de savoir d'où vient l'entrée.
 
 const ACTIONS := {
 	"move_left": Vector2.LEFT,
@@ -11,85 +11,32 @@ const ACTIONS := {
 	"move_up": Vector2.UP,
 	"move_down": Vector2.DOWN,
 }
-const NO_POINTER := -2
-const MOUSE_POINTER := -1
 
 ## Zone morte au centre, en fraction du rayon.
 @export_range(0.0, 0.9) var dead_zone := 0.25
 
 var direction := Vector2.ZERO
 
-var _pointer := NO_POINTER
-
-
-func _ready() -> void:
-	# Les événements sont lus dans _input pour gérer le multi-touch.
-	mouse_filter = MOUSE_FILTER_IGNORE
-
-
-func _notification(what: int) -> void:
-	match what:
-		NOTIFICATION_VISIBILITY_CHANGED, NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_EXIT_TREE:
-			_release()
-
-
-func _input(event: InputEvent) -> void:
-	if not is_visible_in_tree():
-		return
-
-	if event is InputEventScreenTouch:
-		if event.pressed and _pointer == NO_POINTER and _contains(event.position):
-			_pointer = event.index
-			_update(event.position)
-			get_viewport().set_input_as_handled()
-		elif not event.pressed and event.index == _pointer:
-			_release()
-			get_viewport().set_input_as_handled()
-	elif event is InputEventScreenDrag:
-		if event.index == _pointer:
-			_update(event.position)
-			get_viewport().set_input_as_handled()
-	elif event is InputEventMouse:
-		_handle_mouse(event)
-
-
-func _handle_mouse(event: InputEventMouse) -> void:
-	# Souris émulée depuis le toucher : déjà traitée via les événements tactiles,
-	# on l'absorbe seulement pour qu'elle ne déclenche pas un déplacement au clic.
-	if event.device == InputEvent.DEVICE_ID_EMULATION:
-		if _pointer != NO_POINTER or _contains(event.position):
-			get_viewport().set_input_as_handled()
-		return
-
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
-		if event.pressed and _pointer == NO_POINTER and _contains(event.position):
-			_pointer = MOUSE_POINTER
-			_update(event.position)
-			get_viewport().set_input_as_handled()
-		elif not event.pressed and _pointer == MOUSE_POINTER:
-			_release()
-			get_viewport().set_input_as_handled()
-	elif event is InputEventMouseMotion and _pointer == MOUSE_POINTER:
-		_update(event.position)
-		get_viewport().set_input_as_handled()
-
 
 ## Convertit une position à l'écran en direction 8 voies (ou zéro dans la zone morte).
 func direction_for(screen_position: Vector2) -> Vector2:
-	var offset := screen_position - _center()
-	if offset.length() < dead_zone * _radius():
+	var offset := screen_position - _screen_center()
+	if offset.length() < dead_zone * _screen_radius():
 		return Vector2.ZERO
 	var step := roundi(offset.angle() / (PI / 4.0))
 	var snapped := Vector2.from_angle(step * PI / 4.0)
 	return Vector2(signf(roundf(snapped.x)), signf(roundf(snapped.y)))
 
 
-func _update(screen_position: Vector2) -> void:
+func _on_press(screen_position: Vector2) -> void:
 	_set_direction(direction_for(screen_position))
 
 
-func _release() -> void:
-	_pointer = NO_POINTER
+func _on_drag(screen_position: Vector2) -> void:
+	_set_direction(direction_for(screen_position))
+
+
+func _on_release() -> void:
 	_set_direction(Vector2.ZERO)
 
 
@@ -104,18 +51,6 @@ func _set_direction(value: Vector2) -> void:
 		else:
 			Input.action_release(action)
 	queue_redraw()
-
-
-func _contains(screen_position: Vector2) -> bool:
-	return screen_position.distance_to(_center()) <= _radius()
-
-
-func _center() -> Vector2:
-	return get_global_transform_with_canvas() * (size / 2.0)
-
-
-func _radius() -> float:
-	return minf(size.x, size.y) / 2.0 * get_global_transform_with_canvas().get_scale().x
 
 
 func _draw() -> void:
