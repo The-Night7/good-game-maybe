@@ -6,16 +6,9 @@ var _failures := 0
 
 func _initialize() -> void:
 	await process_frame
-	var settings: Node = root.get_node("Settings")
-	settings.save_enabled = false
-	# Simule un premier lancement : aucune disposition clavier choisie.
-	settings.keyboard_layout = ""
 	var main: Node = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 	await process_frame
-
-	_test_keyboard_setup(main)
-	_test_keyboard_presets()
 
 	await _test_dpad_directions(main)
 	await _test_dpad_drives_player(main)
@@ -86,33 +79,3 @@ func _test_dpad_option(main: Node) -> void:
 	_check(dpad.visible, "option D-pad activée -> visible")
 	settings.set_dpad_enabled(false)
 	_check(not dpad.visible, "option D-pad désactivée -> masqué")
-
-
-func _test_keyboard_setup(main: Node) -> void:
-	var settings: Node = root.get_node("Settings")
-	var setup: Control = main.get_node("HUD/KeyboardSetup")
-	_check(setup.visible, "premier lancement PC -> choix du clavier affiché")
-	setup.get_node("%AzertyButton").pressed.emit()
-	_check(not setup.visible, "choisir une disposition ferme la fenêtre")
-	_check(settings.keyboard_layout == "azerty", "le choix AZERTY est retenu")
-	_check(not settings.needs_keyboard_setup(), "plus de choix à faire ensuite")
-
-
-func _test_keyboard_presets() -> void:
-	var settings: Node = root.get_node("Settings")
-	settings.set_keyboard_layout("azerty")
-	_check(_key_triggers(KEY_Z, "move_up"), "AZERTY : Z avance")
-	_check(_key_triggers(KEY_Q, "move_left"), "AZERTY : Q va à gauche")
-	_check(not _key_triggers(KEY_W, "move_up"), "AZERTY : W ne fait rien")
-	settings.set_keyboard_layout("qwerty")
-	_check(_key_triggers(KEY_W, "move_up"), "QWERTY : W avance")
-	_check(_key_triggers(KEY_A, "move_left"), "QWERTY : A va à gauche")
-	_check(not _key_triggers(KEY_Z, "move_up"), "QWERTY : Z ne fait rien")
-	_check(not _key_triggers(KEY_Q, "move_left"), "QWERTY : Q ne fait rien")
-
-
-func _key_triggers(keycode: Key, action: String) -> bool:
-	var event := InputEventKey.new()
-	event.keycode = keycode
-	event.pressed = true
-	return InputMap.event_is_action(event, action)

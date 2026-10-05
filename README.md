@@ -1,7 +1,7 @@
 # good-game-maybe
 
 MMORPG 2D isométrique pour jouer entre amis, inspiré d'Albion Online et de Dofus.
-Combat en temps réel, sur PC et mobile. Voir [DESIGN.md](DESIGN.md) pour la vision du jeu.
+Combat en temps réel. **Priorité : la version mobile**, la version PC viendra ensuite. Voir [DESIGN.md](DESIGN.md) pour la vision du jeu.
 
 ![Prototype](docs/screenshot.png)
 
@@ -15,12 +15,9 @@ Combat en temps réel, sur PC et mobile. Voir [DESIGN.md](DESIGN.md) pour la vis
 
 | | PC | Mobile |
 |---|---|---|
-| Se déplacer | ZQSD (AZERTY) / WASD (QWERTY) ou flèches | D-pad à l'écran (8 directions) |
+| Se déplacer | ZQSD / WASD ou flèches | D-pad à l'écran (8 directions) |
 | Aller à un endroit | Clic gauche (maintenir pour suivre la souris) | Toucher la carte |
 | Options | Bouton **Options** en haut à droite | idem |
-
-Au **premier lancement sur PC**, le jeu demande la disposition du clavier (**QWERTY** ou
-**AZERTY**). On peut la changer ensuite dans **Options → Clavier**.
 
 Le **D-pad** est activé par défaut sur les appareils tactiles. On peut l'activer ou le
 désactiver dans **Options → D-pad tactile** (le choix est sauvegardé).
