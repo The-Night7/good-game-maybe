@@ -26,11 +26,11 @@ temps réel) et de **Dofus** (univers 2D isométrique, métiers, ambiance), avec
 | Rendu | GL Compatibility | Fonctionne sur le plus de téléphones possible |
 | Vue | 2D isométrique, tuiles 64×32 | Style Dofus |
 | Réseau (prévu) | Serveur Godot sans affichage, autoritaire | Même code client/serveur, anti-triche |
-| Contrôles | Clavier, clic/toucher pour se déplacer, D-pad virtuel optionnel | PC et mobile |
+| Contrôles | Clavier (presets QWERTY/AZERTY), clic/toucher pour se déplacer, D-pad virtuel optionnel | PC et mobile |
 
 ## Feuille de route
 
-- [x] **Étape 1a** : carte isométrique, déplacement clavier / clic / toucher, D-pad mobile, options
+- [x] **Étape 1a** : carte isométrique, déplacement clavier / clic / toucher, D-pad mobile, choix QWERTY/AZERTY, options
 - [ ] **Étape 1b** : un monstre, une arme avec des compétences, des points de vie
 - [ ] **Étape 2** : multijoueur (serveur autoritaire, plusieurs joueurs sur la même carte)
 - [ ] **Étape 3** : récolte, fabrication, inventaire sauvegardé, l'équipement donne les compétences
