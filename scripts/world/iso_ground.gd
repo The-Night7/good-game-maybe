@@ -1,16 +1,17 @@
 class_name IsoGround
 extends TileMapLayer
 ## Sol isométrique généré procéduralement.
-## Les textures sont dessinées par code en attendant les vrais assets.
+##
+## Les tuiles servent à la logique (type de terrain, collisions de l'eau) et restent
+## invisibles. Le rendu est fait par un shader « peint » (voir shaders/ground.gdshader),
+## sans quadrillage, dans l'esprit d'Albion Online.
 
 enum Terrain { GRASS, WATER, STONE }
 
 const TILE_SIZE := Vector2i(64, 32)
-const COLORS := {
-	Terrain.GRASS: Color("5a9e4b"),
-	Terrain.WATER: Color("3a78c2"),
-	Terrain.STONE: Color("8d8a83"),
-}
+const GROUND_SHADER := preload("res://shaders/ground.gdshader")
+## Marge d'eau dessinée autour de la carte, pour que la caméra ne voie jamais le vide.
+const OCEAN_MARGIN := 24.0
 ## Rayon (en tuiles) gardé dégagé autour du point d'apparition.
 const SPAWN_CLEARING := 4.0
 
@@ -27,6 +28,7 @@ func generate(seed_value: int) -> void:
 		for y in map_size.y:
 			var cell := Vector2i(x, y)
 			set_cell(cell, 0, Vector2i(_terrain_for(cell, noise), 0))
+	_build_painted_ground()
 
 
 func terrain_at(cell: Vector2i) -> int:
@@ -55,6 +57,42 @@ func _terrain_for(cell: Vector2i, noise: FastNoiseLite) -> int:
 	return Terrain.GRASS
 
 
+## Polygone couvrant la carte (et un océan autour), peint par le shader du sol.
+func _build_painted_ground() -> void:
+	var terrain_map := Image.create(map_size.x, map_size.y, false, Image.FORMAT_RGB8)
+	var channels := {Terrain.GRASS: Color.RED, Terrain.STONE: Color.GREEN, Terrain.WATER: Color.BLUE}
+	for x in map_size.x:
+		for y in map_size.y:
+			terrain_map.set_pixel(x, y, channels[terrain_at(Vector2i(x, y))])
+
+	var origin := map_to_local(Vector2i.ZERO)
+	var axis_x := map_to_local(Vector2i(1, 0)) - origin
+	var axis_y := map_to_local(Vector2i(0, 1)) - origin
+	var inverse := Transform2D(axis_x, axis_y, Vector2.ZERO).affine_inverse()
+
+	var material := ShaderMaterial.new()
+	material.shader = GROUND_SHADER
+	material.set_shader_parameter("terrain_map", ImageTexture.create_from_image(terrain_map))
+	material.set_shader_parameter("map_size", Vector2(map_size))
+	material.set_shader_parameter("origin", origin)
+	material.set_shader_parameter("inv_x", inverse.x)
+	material.set_shader_parameter("inv_y", inverse.y)
+
+	var low := -0.5 - OCEAN_MARGIN
+	var high_x := map_size.x - 0.5 + OCEAN_MARGIN
+	var high_y := map_size.y - 0.5 + OCEAN_MARGIN
+	var corners := PackedVector2Array()
+	for corner: Vector2 in [Vector2(low, low), Vector2(high_x, low), Vector2(high_x, high_y), Vector2(low, high_y)]:
+		corners.append(origin + axis_x * corner.x + axis_y * corner.y)
+
+	var painted := Polygon2D.new()
+	painted.name = "Painted"
+	painted.polygon = corners
+	painted.material = material
+	painted.show_behind_parent = true
+	add_child(painted)
+
+
 func _build_tile_set() -> TileSet:
 	var tiles := TileSet.new()
 	tiles.tile_shape = TileSet.TILE_SHAPE_ISOMETRIC
@@ -62,10 +100,8 @@ func _build_tile_set() -> TileSet:
 	tiles.tile_size = TILE_SIZE
 	tiles.add_physics_layer()
 
+	# Tuiles transparentes : seul le shader dessine le sol.
 	var image := Image.create(TILE_SIZE.x * Terrain.size(), TILE_SIZE.y, false, Image.FORMAT_RGBA8)
-	for terrain: int in Terrain.values():
-		_paint_tile(image, terrain)
-
 	var source := TileSetAtlasSource.new()
 	source.texture = ImageTexture.create_from_image(image)
 	source.texture_region_size = TILE_SIZE
@@ -83,19 +119,3 @@ func _build_tile_set() -> TileSet:
 			data.add_collision_polygon(0)
 			data.set_collision_polygon_points(0, 0, diamond)
 	return tiles
-
-
-func _paint_tile(image: Image, terrain: int) -> void:
-	var rng := RandomNumberGenerator.new()
-	rng.seed = terrain
-	var base: Color = COLORS[terrain]
-	var half := Vector2(TILE_SIZE) / 2.0
-	for px in TILE_SIZE.x:
-		for py in TILE_SIZE.y:
-			var d := absf(px + 0.5 - half.x) / half.x + absf(py + 0.5 - half.y) / half.y
-			if d > 1.02:
-				continue
-			var color := base.lightened(rng.randf_range(0.0, 0.06))
-			if d > 0.9:
-				color = base.darkened(0.15)
-			image.set_pixel(terrain * TILE_SIZE.x + px, py, color)

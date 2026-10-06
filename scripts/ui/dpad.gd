@@ -56,21 +56,23 @@ func _set_direction(value: Vector2) -> void:
 func _draw() -> void:
 	var center := size / 2.0
 	var radius := minf(size.x, size.y) / 2.0
-	var arm := radius * 0.36
-	var idle := Color(1, 1, 1, 0.35)
-	var active := Color(1, 0.85, 0.4, 0.85)
+	var arm := radius * 0.34
+	var leather := Color(0.17, 0.14, 0.11, 0.8)
+	var active := Color("e6c35a")
 
-	draw_circle(center, radius, Color(0, 0, 0, 0.25))
-	draw_rect(Rect2(center - Vector2(arm, radius * 0.9), Vector2(arm * 2, radius * 1.8)), idle)
-	draw_rect(Rect2(center - Vector2(radius * 0.9, arm), Vector2(radius * 1.8, arm * 2)), idle)
+	draw_circle(center, radius, Color(0.08, 0.06, 0.05, 0.45))
+	draw_arc(center, radius * 0.97, 0.0, TAU, 64, Color(SkillButton.RIM, 0.6), 2.0, true)
+	draw_rect(Rect2(center - Vector2(arm, radius * 0.86), Vector2(arm * 2, radius * 1.72)), leather)
+	draw_rect(Rect2(center - Vector2(radius * 0.86, arm), Vector2(radius * 1.72, arm * 2)), leather)
+	draw_circle(center, arm * 0.55, Color(SkillButton.RIM, 0.35))
 
 	for action: String in ACTIONS:
 		var axis: Vector2 = ACTIONS[action]
-		var tip := center + axis * radius * 0.78
-		var side := axis.orthogonal() * arm * 0.6
-		var base := tip - axis * arm * 0.8
-		var color := active if direction.dot(axis) > 0.0 else Color(1, 1, 1, 0.8)
+		var tip := center + axis * radius * 0.76
+		var side := axis.orthogonal() * arm * 0.55
+		var base := tip - axis * arm * 0.75
+		var color := active if direction.dot(axis) > 0.0 else Color(SkillButton.INK, 0.8)
 		draw_colored_polygon(PackedVector2Array([tip, base + side, base - side]), color)
 
 	if direction != Vector2.ZERO:
-		draw_circle(center + direction.normalized() * radius * 0.45, arm * 0.7, active)
+		draw_circle(center + direction.normalized() * radius * 0.45, arm * 0.6, Color(active, 0.8))

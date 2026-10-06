@@ -18,6 +18,23 @@ temps réel) et de **Dofus** (univers 2D isométrique, métiers, ambiance), avec
 3. **Une économie faite par les joueurs** : récolte, métiers, artisanat, échanges.
 4. **Un monde qui a une histoire** : la timeline (à définir, voir plus bas).
 
+## Direction artistique
+
+Inspirée d'**Albion Online**, adaptée à la 2D isométrique pour rester légère sur mobile :
+
+- **Sol peint** : pas de quadrillage visible, transitions douces herbe / terre / pierre,
+  plages de sable et écume au bord de l'eau, eau animée, ombres de nuages qui passent.
+- **Formes « low-poly » à facettes** : feuillages, rochers, slimes de roche.
+- **Palette naturelle et un peu désaturée** : verts olive, terres, pierres beiges, eaux sarcelle.
+- **Lumière** venant d'en haut à gauche, ombres douces portées vers le bas à droite.
+- **Personnages** trapus avec cape, armure de cuir, bottes, animation de marche.
+- **Interface** sombre à liserés dorés, titres en **Cinzel** (police libre, licence OFL),
+  boutons ronds à pictogrammes (style Guardian Tales).
+
+Aucune image d'Albion n'est copiée : tout est dessiné par le code (`scripts/art.gd`,
+`shaders/ground.gdshader`). Quand le jeu aura un ou une artiste, ces dessins pourront être
+remplacés par de vrais sprites dans le même esprit.
+
 ## Choix techniques
 
 | Sujet | Choix | Pourquoi |
@@ -46,7 +63,8 @@ D-pad, toucher pour se déplacer, boutons à l'écran.
 - [x] **Étape 2** : combat temps réel, monstres avec IA, compétences liées à l'arme, mort et réapparition
 - [x] **Étape 3** : récolte, artisanat, sac, équipement, potions
 - [x] **Étape 4** : multijoueur entre amis (hôte sur téléphone ou serveur dédié), sauvegarde chez l'hôte
-- [ ] **Étape 5** : vrais graphismes (sprites, animations), sons et musique
+- [x] **Étape 5a** : direction artistique inspirée d'Albion (sol peint, facettes, interface)
+- [ ] **Étape 5b** : sprites dessinés par un ou une artiste, animations, sons et musique
 - [ ] **Étape 6** : plusieurs zones et donjons, boss, paliers d'équipement (T1 → T4 comme Albion)
 - [ ] **Étape 7** : la timeline (histoire, quêtes, événements du monde), guildes, marché entre joueurs
 - [ ] **Étape 8** : serveur en ligne permanent, comptes, version PC

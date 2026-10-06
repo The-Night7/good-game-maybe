@@ -6,6 +6,10 @@ et l'univers en ligne de Dofus. Voir [DESIGN.md](DESIGN.md) pour la vision du je
 
 ![En jeu](docs/screenshot.png)
 
+**Style graphique inspiré d'Albion Online** : sol peint sans quadrillage, formes « low-poly »
+à facettes, couleurs naturelles, lumière douce et ombres de nuages, interface sombre à
+liserés dorés. Tout est dessiné par le code et des shaders (aucune image d'Albion n'est utilisée).
+
 ## Ce qu'on peut faire
 
 - **Combattre** des slimes et des slimes de roche, en temps réel avec visée automatique.
@@ -15,9 +19,9 @@ et l'univers en ligne de Dofus. Voir [DESIGN.md](DESIGN.md) pour la vision du je
 - **Jouer à plusieurs** : un joueur héberge depuis son téléphone et ses amis le rejoignent.
   La progression est sauvegardée chez l'hôte.
 
-| Menu | Sac & artisanat |
-|---|---|
-| ![Menu](docs/menu.png) | ![Sac](docs/sac.png) |
+| Menu | Au camp | Artisanat |
+|---|---|---|
+| ![Menu](docs/menu.png) | ![Camp](docs/camp.png) | ![Sac](docs/sac.png) |
 
 ## Lancer le jeu
 
@@ -73,9 +77,12 @@ godot --headless --path . -s res://tests/network_client_test.gd -- --port=7791 -
 ```
 scenes/             Scènes Godot (menu, monde, joueur, monstre, ressource, HUD)
 scripts/game_data.gd  Tout l'équilibrage : objets, armes, compétences, recettes, monstres
+scripts/art.gd      Outils de dessin du style (facettes, ombres, lumière)
+shaders/            Sol peint, vignettage
+assets/fonts/       Police Cinzel (titres), licence SIL OFL
 scripts/autoload    Settings (préférences) et Network (solo / hôte / client / serveur)
 scripts/entities    Joueur, monstres, ressources, résolution du combat
 scripts/world       Carte isométrique, monde (apparitions, butin, sauvegarde), effets
-scripts/ui          HUD, D-pad, boutons de compétence, sac, menu principal
+scripts/ui          HUD, D-pad, boutons et pictogrammes de compétence, sac, menu
 tests/              Tests automatisés (sans affichage)
 ```

@@ -23,7 +23,8 @@ func _ready() -> void:
 	layout.add_child(header)
 	var title := Label.new()
 	title.text = "Sac & artisanat"
-	title.add_theme_font_size_override("font_size", 26)
+	title.theme_type_variation = &"TitleLabel"
+
 	title.size_flags_horizontal = SIZE_EXPAND_FILL
 	header.add_child(title)
 	var close := Button.new()

@@ -1,6 +1,16 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_menu"]
+
+[sub_resource type="Gradient" id="Gradient_bg"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(0.2, 0.17, 0.12, 1, 0.05, 0.04, 0.03, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_bg"]
+gradient = SubResource("Gradient_bg")
+fill = 1
+fill_from = Vector2(0.5, 0.35)
+fill_to = Vector2(1.1, 1.1)
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -11,14 +21,15 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_menu")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.11, 0.16, 0.13, 1)
+texture = SubResource("GradientTexture2D_bg")
+expand_mode = 1
 
 [node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -35,8 +46,8 @@ theme_override_constants/separation = 14
 
 [node name="Title" type="Label" parent="Center/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.88, 0.54, 1)
-theme_override_font_sizes/font_size = 46
+theme_type_variation = &"TitleLabel"
+theme_override_font_sizes/font_size = 52
 text = "Good Game Maybe"
 horizontal_alignment = 1
 

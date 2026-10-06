@@ -6,21 +6,22 @@ class_name GameData
 ## Ordre des compétences : [attaque de base, compétence 1, compétence 2].
 ## Types : melee (cône devant), circle (autour de soi), shot (cible unique à distance),
 ## area (zone autour de la cible), heal (soigne les alliés autour).
+## « icon » choisit le pictogramme dessiné sur le bouton (voir SkillButton).
 const WEAPON_SKILLS := {
 	"sword": [
-		{"name": "Taillade", "kind": "melee", "damage": 12, "range": 52.0, "cooldown": 0.5},
-		{"name": "Tourbillon", "kind": "circle", "damage": 18, "radius": 76.0, "cooldown": 5.0},
-		{"name": "Fracas", "kind": "melee", "damage": 40, "range": 58.0, "cooldown": 8.0, "stun": 1.5},
+		{"name": "Taillade", "icon": "sword", "kind": "melee", "damage": 12, "range": 52.0, "cooldown": 0.5},
+		{"name": "Tourbillon", "icon": "whirl", "kind": "circle", "damage": 18, "radius": 76.0, "cooldown": 5.0},
+		{"name": "Fracas", "icon": "smash", "kind": "melee", "damage": 40, "range": 58.0, "cooldown": 8.0, "stun": 1.5},
 	],
 	"bow": [
-		{"name": "Tir", "kind": "shot", "damage": 10, "range": 240.0, "cooldown": 0.6},
-		{"name": "Pluie de flèches", "kind": "area", "damage": 16, "range": 240.0, "radius": 64.0, "cooldown": 6.0},
-		{"name": "Tir perçant", "kind": "shot", "damage": 38, "range": 280.0, "cooldown": 7.0},
+		{"name": "Tir", "icon": "arrow", "kind": "shot", "damage": 10, "range": 240.0, "cooldown": 0.6},
+		{"name": "Pluie de flèches", "icon": "arrow_rain", "kind": "area", "damage": 16, "range": 240.0, "radius": 64.0, "cooldown": 6.0},
+		{"name": "Tir perçant", "icon": "pierce", "kind": "shot", "damage": 38, "range": 280.0, "cooldown": 7.0},
 	],
 	"staff": [
-		{"name": "Boule de feu", "kind": "shot", "damage": 12, "range": 200.0, "cooldown": 0.8},
-		{"name": "Explosion", "kind": "area", "damage": 26, "range": 200.0, "radius": 72.0, "cooldown": 7.0},
-		{"name": "Soin", "kind": "heal", "amount": 35, "radius": 110.0, "cooldown": 10.0},
+		{"name": "Boule de feu", "icon": "fireball", "kind": "shot", "damage": 12, "range": 200.0, "cooldown": 0.8},
+		{"name": "Explosion", "icon": "burst", "kind": "area", "damage": 26, "range": 200.0, "radius": 72.0, "cooldown": 7.0},
+		{"name": "Soin", "icon": "heal", "kind": "heal", "amount": 35, "radius": 110.0, "cooldown": 10.0},
 	],
 }
 
@@ -55,11 +56,11 @@ const RESOURCES := {
 
 const MONSTERS := {
 	"slime": {
-		"name": "Slime", "hp": 40, "damage": 6, "speed": 55.0, "color": Color("57c06a"),
+		"name": "Slime", "hp": 40, "damage": 6, "speed": 55.0, "color": Color("6fa35a"),
 		"size": 1.0, "loot": {"jelly": [1, 2]},
 	},
 	"rock_slime": {
-		"name": "Slime de roche", "hp": 110, "damage": 12, "speed": 45.0, "color": Color("8c8f99"),
+		"name": "Slime de roche", "hp": 110, "damage": 12, "speed": 45.0, "color": Color("7d8a8c"),
 		"size": 1.35, "loot": {"jelly": [1, 2], "ore": [1, 3]},
 	},
 }

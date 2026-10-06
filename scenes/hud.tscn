@@ -6,31 +6,44 @@
 [ext_resource type="Script" path="res://scripts/ui/inventory_panel.gd" id="4_inventory"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_bg"]
-bg_color = Color(0, 0, 0, 0.55)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+bg_color = Color(0.06, 0.05, 0.04, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.43, 0.33, 0.21, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
-bg_color = Color(0.84, 0.27, 0.29, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+bg_color = Color(0.66, 0.2, 0.17, 1)
+border_width_top = 2
+border_color = Color(0.85, 0.38, 0.3, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_status"]
-bg_color = Color(0.08, 0.1, 0.14, 0.6)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+bg_color = Color(0.105, 0.09, 0.075, 0.82)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.66, 0.52, 0.31, 0.8)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 content_margin_left = 14.0
 content_margin_top = 10.0
 content_margin_right = 14.0
 content_margin_bottom = 10.0
 
 [node name="HUD" type="CanvasLayer"]
+layer = 2
 script = ExtResource("1_hud")
 
 [node name="Status" type="PanelContainer" parent="."]
@@ -49,6 +62,7 @@ theme_override_constants/separation = 6
 [node name="NameLabel" type="Label" parent="Status/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_type_variation = &"TitleLabel"
 theme_override_font_sizes/font_size = 22
 
 [node name="HpBar" type="ProgressBar" parent="Status/VBox"]
@@ -140,7 +154,8 @@ offset_right = 326.0
 offset_bottom = 286.0
 mouse_filter = 2
 script = ExtResource("3_skill")
-color = Color(0.705, 0.282, 0.235, 1)
+icon = "sword"
+color = Color(0.54, 0.18, 0.16, 1)
 repeat_while_held = true
 
 [node name="SkillButton1" type="Control" parent="Actions"]
@@ -172,8 +187,8 @@ offset_right = 180.0
 offset_bottom = 140.0
 mouse_filter = 2
 script = ExtResource("3_skill")
-label = "Potion"
-color = Color(0.878, 0.314, 0.353, 1)
+icon = "potion"
+color = Color(0.3, 0.2, 0.16, 1)
 
 [node name="KnockoutLabel" type="Label" parent="."]
 anchors_preset = 8
@@ -187,8 +202,7 @@ offset_right = 300.0
 offset_bottom = 60.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
-theme_override_constants/outline_size = 8
+theme_type_variation = &"TitleLabel"
 theme_override_font_sizes/font_size = 34
 text = "K.O. !
 Retour au camp dans un instant…"
@@ -222,7 +236,7 @@ theme_override_constants/separation = 14
 
 [node name="Title" type="Label" parent="OptionsPanel/Margin/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 26
+theme_type_variation = &"TitleLabel"
 text = "Options"
 horizontal_alignment = 1
 

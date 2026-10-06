@@ -1,14 +1,23 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/world/iso_ground.gd" id="2_ground"]
 [ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="3_hud"]
+[ext_resource type="Script" path="res://scripts/world/decor.gd" id="4_decor"]
+[ext_resource type="Shader" path="res://shaders/vignette.gdshader" id="5_vignette"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
+shader = ExtResource("5_vignette")
+shader_parameter/strength = 0.5
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
 
 [node name="Ground" type="TileMapLayer" parent="."]
 script = ExtResource("2_ground")
+
+[node name="Decor" type="Node2D" parent="."]
+script = ExtResource("4_decor")
 
 [node name="Entities" type="Node2D" parent="."]
 y_sort_enabled = true
@@ -18,5 +27,16 @@ z_index = 10
 
 [node name="Spawner" type="MultiplayerSpawner" parent="."]
 spawn_path = NodePath("../Entities")
+
+[node name="Ambience" type="CanvasLayer" parent="."]
+
+[node name="Vignette" type="ColorRect" parent="Ambience"]
+material = SubResource("ShaderMaterial_vignette")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="HUD" parent="." instance=ExtResource("3_hud")]

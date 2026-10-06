@@ -47,10 +47,13 @@ func _process(_delta: float) -> void:
 		return
 	if _player.should_harvest():
 		_attack.set_label("Récolter")
-		_attack.color = Color("4f9a45")
+		_attack.set_icon("harvest")
+		_attack.color = Color("4a6b34")
 	else:
-		_attack.set_label(_skill_label(_player.skills()[0].name))
-		_attack.color = Color("b4483c")
+		var skill: Dictionary = _player.skills()[0]
+		_attack.set_label(skill.name)
+		_attack.set_icon(skill.icon)
+		_attack.color = Color("8a2f28")
 
 
 func _bind_player(player: Player) -> void:
@@ -99,12 +102,12 @@ func _update_stats() -> void:
 
 func _update_equipment() -> void:
 	var skills := _player.skills()
-	for i in _skill_buttons.size():
-		_skill_buttons[i].set_label(_skill_label(skills[i + 1].name))
 	var weapon: String = GameData.ITEMS[_player.weapon_id].weapon
-	var colors := {"sword": Color("3a6ea5"), "bow": Color("5f7d2f"), "staff": Color("8a4fb0")}
-	for button in _skill_buttons:
-		button.color = colors[weapon]
+	var colors := {"sword": Color("33506e"), "bow": Color("4d5f2a"), "staff": Color("5e3a6e")}
+	for i in _skill_buttons.size():
+		_skill_buttons[i].set_label(skills[i + 1].name)
+		_skill_buttons[i].set_icon(skills[i + 1].icon)
+		_skill_buttons[i].color = colors[weapon]
 
 
 func _update_inventory() -> void:
@@ -150,9 +153,3 @@ func _update_controls() -> void:
 	_actions.visible = _player != null and not panel_open
 
 
-## Coupe les noms longs sur deux lignes pour qu'ils tiennent dans un bouton rond.
-func _skill_label(skill_name: String) -> String:
-	if skill_name.length() > 9 and " " in skill_name:
-		var cut := skill_name.find(" ")
-		return skill_name.left(cut) + "\n" + skill_name.substr(cut + 1)
-	return skill_name

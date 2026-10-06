@@ -40,7 +40,7 @@ shape = SubResource("CircleShape2D_feet")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 enabled = false
-zoom = Vector2(1.5, 1.5)
+zoom = Vector2(1.75, 1.75)
 position_smoothing_enabled = true
 
 [node name="OwnerSync" type="MultiplayerSynchronizer" parent="."]

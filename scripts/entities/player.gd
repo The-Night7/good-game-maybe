@@ -70,6 +70,12 @@ var _respawn_left := 0.0
 var _last_hurt_at := -100.0
 var _regen_buffer := 0.0
 
+# Affichage.
+const HAIR_COLORS := [Color("3b2a1e"), Color("6b4a2b"), Color("a8763e"), Color("d8b46a"), Color("1e1a18"), Color("8c3b2a")]
+var _walk_phase := 0.0
+var _side := 1.0
+var _last_position := Vector2.ZERO
+
 
 func _enter_tree() -> void:
 	# Le nom porte l'identifiant réseau du joueur : "Player_<peer>".
@@ -397,45 +403,102 @@ func _now() -> float:
 	return Time.get_ticks_msec() / 1000.0
 
 
-# --- Affichage (placeholder en attendant les sprites) ---------------------------
+# --- Affichage -------------------------------------------------------------------
+
+func _process(delta: float) -> void:
+	# Animation de marche, calculée à partir du déplacement réel (marche aussi pour
+	# les autres joueurs, dont on ne reçoit que la position).
+	var moved := global_position - _last_position
+	_last_position = global_position
+	if absf(facing.x) > 0.2:
+		_side = signf(facing.x)
+	if moved.length() > 0.3 and not dead:
+		_walk_phase += delta * 11.0
+		queue_redraw()
+	elif fmod(_walk_phase, PI) > 0.05:
+		_walk_phase = roundf(_walk_phase / PI) * PI
+		queue_redraw()
+
 
 func _draw() -> void:
 	var alpha := 0.45 if dead else 1.0
-	var tunic := Color.from_hsv(fmod(peer_id * 0.618, 1.0), 0.55, 0.85)
-	if armor_id == "leather_vest":
-		tunic = Color("7a4e2d")
+	var tunic := Color.from_hsv(fmod(peer_id * 0.618, 1.0), 0.42, 0.62)
+	var skin := Color("e2b58f")
+	var hair: Color = HAIR_COLORS[peer_id % HAIR_COLORS.size()]
+	var swing := sin(_walk_phase)
+	var bob := -absf(cos(_walk_phase)) * 1.5 if fmod(_walk_phase, PI) > 0.05 else 0.0
 
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2(1.0, 0.5))
-	draw_circle(Vector2.ZERO, 10.0, Color(0, 0, 0, 0.3 * alpha))
+	Art.soft_shadow(self, Vector2.ZERO, 12.0, 0.45 * alpha)
+	# Tout est dessiné tourné vers la droite, puis retourné selon la direction.
+	draw_set_transform(Vector2(0, bob), 0.0, Vector2(_side, 1.0))
+
+	var cape := Art.shade(tunic, 0.4)
+	var sway := swing * 1.5
+	draw_colored_polygon(PackedVector2Array([Vector2(-5, -31), Vector2(5, -31), Vector2(3 + sway, -9), Vector2(-10 + sway, -8)]), Color(cape, alpha))
+
+	var pants := Color("3d342c")
+	var boots := Color("2b2018")
+	for leg in [-1.0, 1.0]:
+		var hip := Vector2(2.5 * leg - 0.5, -15)
+		var foot := Vector2(2.5 * leg + swing * 3.5 * leg, -1)
+		draw_line(hip, foot + Vector2(0, -3), Color(pants if leg < 0 else Art.shade(pants, 0.15), alpha), 4.0)
+		draw_colored_polygon(PackedVector2Array([foot + Vector2(-2, -4), foot + Vector2(2, -4), foot + Vector2(4, 0), foot + Vector2(-2, 0)]), Color(boots, alpha))
+
+	# Bras arrière, torse, ceinture, bras avant.
+	draw_line(Vector2(-4, -28), Vector2(-5 - swing * 2.5, -17), Color(Art.shade(tunic, 0.25), alpha), 3.5)
+	var chest := Color("6e4a2c") if armor_id == "leather_vest" else tunic
+	draw_colored_polygon(PackedVector2Array([Vector2(-7, -31), Vector2(7, -31), Vector2(6, -14), Vector2(-6, -14)]), Color(Art.shade(chest, 0.2), alpha))
+	draw_colored_polygon(PackedVector2Array([Vector2(-7, -31), Vector2(1, -31), Vector2(0, -14), Vector2(-6, -14)]), Color(Art.lit(chest, 0.08), alpha))
+	if armor_id == "leather_vest":
+		draw_line(Vector2(-5, -27), Vector2(5, -27), Color(Color("a8835a"), alpha), 1.0)
+		draw_line(Vector2(-5, -22), Vector2(5, -22), Color(Color("a8835a"), alpha), 1.0)
+		draw_circle(Vector2(-6, -30), 3.2, Color(Color("5a3c24"), alpha))
+	draw_rect(Rect2(-6.5, -17, 13, 2.5), Color(Color("4a3220"), alpha))
+	draw_rect(Rect2(-1, -17, 2.5, 2.5), Color(Color("d6b264"), alpha))
+	var hand := Vector2(7 + swing * 2.5, -18)
+	draw_line(Vector2(5, -28), hand, Color(Art.lit(tunic, 0.05), alpha), 3.5)
+	draw_circle(hand, 2.0, Color(skin, alpha))
+
+	# Tête : visage, cheveux, regard vers l'avant.
+	draw_circle(Vector2(0, -37), 6.0, Color(skin, alpha))
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(-6.5, -36), Vector2(-6, -41), Vector2(-2, -44), Vector2(4, -43.5), Vector2(6.5, -40), Vector2(2, -40), Vector2(-3, -38),
+	]), Color(hair, alpha))
+	draw_circle(Vector2(3, -37), 0.9, Color(Color("2a1e18"), alpha))
+
+	_draw_weapon(hand, alpha)
 	draw_set_transform(Vector2.ZERO)
-	draw_rect(Rect2(-7, -26, 14, 22), Color(tunic, alpha))
-	draw_circle(Vector2(0, -32), 7.0, Color(Color("f2d6b3"), alpha))
-	_draw_weapon(alpha)
 
 	var font := ThemeDB.fallback_font
 	var label := "%s (K.O.)" % display_name if dead else display_name
-	var origin := Vector2(-60, -50)
+	var origin := Vector2(-60, -54)
 	draw_string_outline(font, origin, label, HORIZONTAL_ALIGNMENT_CENTER, 120, 12, 3, Color(0, 0, 0, 0.7))
-	draw_string(font, origin, label, HORIZONTAL_ALIGNMENT_CENTER, 120, 12, Color(1, 1, 1, alpha))
+	draw_string(font, origin, label, HORIZONTAL_ALIGNMENT_CENTER, 120, 12, Color(Color("f3e6c8"), alpha))
 	if not is_local() and not dead:
-		_draw_bar(Vector2(-14, -47), 28.0, float(hp) / max_hp, Color("7ee081"))
+		_draw_bar(Vector2(-14, -51), 28.0, float(hp) / max_hp, Color("c8443c"))
 
 
-func _draw_weapon(alpha: float) -> void:
+func _draw_weapon(hand: Vector2, alpha: float) -> void:
 	var item: Dictionary = GameData.ITEMS[weapon_id]
-	var color := Color(item.color, alpha)
-	var hand := Vector2(10, -16)
+	var wood := Color("6b4a2b")
 	match item.weapon:
 		"sword":
-			draw_line(hand, hand + Vector2(6, -18), color, 3.0)
-			draw_line(hand + Vector2(-3, -1), hand + Vector2(4, 1), Color(0.3, 0.2, 0.1, alpha), 3.0)
+			var steel := Color("c9ced3") if weapon_id == "sword_iron" else Color("b08d5a")
+			var tip := hand + Vector2(9, -19)
+			draw_colored_polygon(PackedVector2Array([hand + Vector2(-1, -2), hand + Vector2(1.5, -1), tip + Vector2(1, 0), tip]), Color(steel, alpha))
+			draw_line(hand + Vector2(-0.5, -2), tip, Color(Art.lit(steel, 0.3), alpha), 1.0)
+			draw_line(hand + Vector2(-3, -0.5), hand + Vector2(3, -3.5), Color(Color("7a5a2e"), alpha), 2.5)
 		"bow":
-			draw_arc(hand + Vector2(-2, -6), 12.0, -PI / 2.5, PI / 2.5, 12, color, 2.0)
+			draw_arc(hand + Vector2(1, -2), 13.0, -PI / 2.2, PI / 2.2, 14, Color(wood, alpha), 2.5)
+			draw_line(hand + Vector2(1, -2) + Vector2.from_angle(-PI / 2.2) * 13.0, hand + Vector2(1, -2) + Vector2.from_angle(PI / 2.2) * 13.0, Color(Color("e8e0c8"), alpha * 0.8), 1.0)
 		"staff":
-			draw_line(hand + Vector2(0, 8), hand + Vector2(2, -22), Color(0.45, 0.3, 0.15, alpha), 2.5)
-			draw_circle(hand + Vector2(2, -24), 4.0, color)
+			draw_line(hand + Vector2(-1, 10), hand + Vector2(2, -24), Color(wood, alpha), 2.5)
+			var orb := hand + Vector2(2.5, -27)
+			draw_circle(orb, 7.0, Color(Color("ff8a3d"), 0.18 * alpha))
+			draw_circle(orb, 3.8, Color(Color("ff8a3d"), alpha))
+			draw_circle(orb + Vector2(-1, -1), 1.6, Color(Color("ffe0a0"), alpha))
 
 
 func _draw_bar(origin: Vector2, width: float, fraction: float, color: Color) -> void:
-	draw_rect(Rect2(origin, Vector2(width, 4)), Color(0, 0, 0, 0.6))
+	draw_rect(Rect2(origin - Vector2(1, 1), Vector2(width + 2, 6)), Color(0.08, 0.06, 0.04, 0.8))
 	draw_rect(Rect2(origin, Vector2(width * clampf(fraction, 0.0, 1.0), 4)), color)

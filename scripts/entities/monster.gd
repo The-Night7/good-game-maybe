@@ -160,21 +160,34 @@ func take_damage(amount: int, attacker_peer: int, stun := 0.0) -> void:
 func _draw() -> void:
 	var size: float = _data.size
 	var squish := 1.0 + sin(_anim) * 0.08
-	var body_color: Color = Color.WHITE if _flash > 0.0 else _data.color
+	var body: Color = _data.color
 	if _stun_left > 0.0:
-		body_color = body_color.lerp(Color("ffe08a"), 0.4)
+		body = body.lerp(Color("e6c95a"), 0.4)
 
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2(1.0, 0.5))
-	draw_circle(Vector2.ZERO, 12.0 * size, Color(0, 0, 0, 0.3))
+	Art.soft_shadow(self, Vector2.ZERO, 13.0 * size, 0.45)
 	draw_set_transform(Vector2(0, -10 * size), 0.0, Vector2(squish, 1.0 / squish))
-	draw_circle(Vector2.ZERO, 12.0 * size, body_color)
-	draw_circle(Vector2(-4, -4) * size, 3.5 * size, Color(1, 1, 1, 0.35))
-	draw_circle(Vector2(-4, 0) * size, 2.2 * size, Color("1d1d24"))
-	draw_circle(Vector2(4, 0) * size, 2.2 * size, Color("1d1d24"))
+	var r := 12.0 * size
+	# Corps gélatineux : bas sombre, reflet en haut à gauche.
+	draw_circle(Vector2(0, 1.5) * size, r, Art.shade(body, 0.35))
+	draw_circle(Vector2.ZERO, r * 0.94, body)
+	draw_circle(Vector2(-3, -3) * size, r * 0.55, Art.lit(body, 0.12))
+	draw_circle(Vector2(-5, -6) * size, r * 0.18, Color(1, 1, 1, 0.55))
+	if kind == "rock_slime":
+		var rng := Art.rng_for(home)
+		for plate: Vector2 in [Vector2(-5, -8), Vector2(4, -9), Vector2(0, -3)]:
+			var points := Art.facet_polygon(plate * size, 4.5 * size, 5, rng.randf() * TAU, 0.2, rng, 0.8)
+			draw_colored_polygon(points, Color("8f8b84"))
+			draw_colored_polygon(Art.facet_polygon(plate * size + Vector2(-1, -1), 2.5 * size, 4, 0.0, 0.1, rng), Color("b7b2a8"))
+	# Yeux.
+	for eye_x in [-4.0, 4.0]:
+		draw_circle(Vector2(eye_x, 0) * size, 2.4 * size, Color("1d1a18"))
+		draw_circle(Vector2(eye_x - 0.7, -0.8) * size, 0.8 * size, Color(1, 1, 1, 0.9))
+	if _flash > 0.0:
+		draw_circle(Vector2.ZERO, r, Color(1, 1, 1, _flash / 0.15 * 0.7))
 	draw_set_transform(Vector2.ZERO)
 
 	if hp < max_hp:
 		var width := 26.0 * size
-		var origin := Vector2(-width / 2.0, -28.0 * size)
-		draw_rect(Rect2(origin, Vector2(width, 4)), Color(0, 0, 0, 0.6))
-		draw_rect(Rect2(origin, Vector2(width * float(hp) / max_hp, 4)), Color("ff6b6b"))
+		var origin := Vector2(-width / 2.0, -30.0 * size)
+		draw_rect(Rect2(origin - Vector2(1, 1), Vector2(width + 2, 6)), Color(0.08, 0.06, 0.04, 0.8))
+		draw_rect(Rect2(origin, Vector2(width * float(hp) / max_hp, 4)), Color("c8443c"))

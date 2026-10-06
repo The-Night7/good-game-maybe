@@ -40,6 +40,7 @@ var _save_left := -1.0
 func _ready() -> void:
 	add_to_group("world")
 	_ground.generate(WORLD_SEED)
+	$Decor.populate(_ground, WORLD_SEED + 2)
 	_place_resources()
 	_spawner.spawn_function = _spawn_entity
 
